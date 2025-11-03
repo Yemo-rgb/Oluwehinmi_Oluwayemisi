@@ -18,7 +18,7 @@ DATABASE = 'database.db'
 
 # Define the model path and the download URL
 MODEL_PATH = 'face_emotionModel.h5'
-MODEL_URL = "https://drive.google.com/file/d/1MYmhjNmFzLECDiejxzBYBT2v-QwbF6XS/view?usp=drive_link" # <-- IMPORTANT!
+MODEL_URL = "https://drive.google.com/uc?export=download&id=1MYmhjNmFzLECDiejxzBYBT2v-QwbF6XS" # <-- IMPORTANT!
 
 def download_model(url, path):
     """Downloads file from a URL to a path."""
@@ -202,3 +202,4 @@ if __name__ == '__main__':
     # Run the app
 
     app.run(debug=True, port=8080)
+
