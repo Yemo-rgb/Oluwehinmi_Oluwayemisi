@@ -1,9 +1,7 @@
-tensorflow
-tensorflow-datasets
+Flask
+tensorflow-cpu
+Pillow
 numpy
-pandas
-matplotlib
-scikit-learn
-flask
-pillow
+requests
 gunicorn
+
