@@ -1,5 +1,7 @@
 import os
 import sqlite3
+import requests
+import sys
 import numpy as np
 from flask import Flask, request, render_template, g
 from tensorflow.keras.models import load_model
@@ -12,12 +14,41 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads'
 DATABASE = 'database.db'
 
 # --- Load the Trained Model ---
+# --- Load the Trained Model ---
+
+# Define the model path and the download URL
+MODEL_PATH = 'face_emotionModel.h5'
+MODEL_URL = "https://drive.google.com/file/d/1MYmhjNmFzLECDiejxzBYBT2v-QwbF6XS/view?usp=drive_link" # <-- IMPORTANT!
+
+def download_model(url, path):
+    """Downloads file from a URL to a path."""
+    print(f"Downloading model from {url}...")
+    try:
+        with requests.get(url, stream=True) as r:
+            r.raise_for_status()
+            with open(path, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    f.write(chunk)
+        print("Model downloaded successfully.")
+    except Exception as e:
+        print(f"Error downloading model: {e}", file=sys.stderr)
+        return False
+    return True
+
+# Check if model exists, if not, download it
+if not os.path.exists(MODEL_PATH):
+    if not download_model(MODEL_URL, MODEL_PATH):
+        print("Failed to download model. Exiting.", file=sys.stderr)
+        sys.exit(1) # Exit if download fails
+
+# Now, load the model
 try:
-    model = load_model('face_emotionModel.h5')
+    model = load_model(MODEL_PATH)
     print("Model loaded successfully.")
 except Exception as e:
-    print(f"Error loading model: {e}")
+    print(f"Error loading model {MODEL_PATH}: {e}", file=sys.stderr)
     model = None
+    sys.exit(1) # Exit if loading fails
 
 # Define the emotions
 EMOTIONS = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
@@ -169,4 +200,5 @@ if __name__ == '__main__':
     init_db()
     
     # Run the app
+
     app.run(debug=True, port=8080)
